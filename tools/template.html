@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>液石法ハンドブック</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="液石法">
+<meta name="theme-color" content="#0f5c8c">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--sub:#5d6777;--line:#e2e6ec;--acc:#0f5c8c;--acc2:#e8f1f8;--mark:#ffe58a;--law:#0f5c8c;--rei:#7a4fb0;--kis:#1d7a52}
+@media (prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1b2129;--ink:#e6e9ee;--sub:#9aa4b3;--line:#2c3440;--acc:#5fb0e8;--acc2:#1d3242;--mark:#7a6420;--law:#5fb0e8;--rei:#b591e6;--kis:#5cc79a}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:10;background:var(--acc);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px}
+@media (prefers-color-scheme:dark){header{background:#0b3a58}}
+.brand{display:flex;align-items:baseline;gap:8px;font-weight:700;font-size:15px;margin-bottom:8px}
+.brand small{font-weight:400;opacity:.8;font-size:11px}
+.sbox{display:flex;gap:6px}
+.sbox input{flex:1;min-width:0;font-size:16px;padding:10px 12px;border:0;border-radius:10px;outline:none;background:#fff;color:#1d2430}
+.sbox button{border:0;border-radius:10px;padding:0 14px;font-size:15px;background:#fff;color:var(--acc);font-weight:700}
+.filters{display:flex;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+.filters label{flex:none;font-size:12px;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:99px;display:flex;align-items:center;gap:4px}
+.filters input{margin:0;accent-color:#fff}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav a{flex:1;text-align:center;padding:8px 0 6px;font-size:11px;color:var(--sub);text-decoration:none}
+nav a b{display:block;font-size:19px;line-height:1.2;font-weight:400}
+nav a.on{color:var(--acc);font-weight:700}
+main{padding:12px 12px 90px;max-width:760px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+a.card{display:block;color:inherit;text-decoration:none}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:6px;padding:0 6px;margin-right:6px;vertical-align:1px}
+.t-法{background:var(--law)}.t-令{background:var(--rei)}.t-規則{background:var(--kis)}.t-wiki{background:#c0762a}
+.ttl{font-weight:700}
+.cap{color:var(--sub);font-size:13px}
+.snip{font-size:14px;color:var(--sub);margin-top:4px;overflow-wrap:anywhere}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.meta{font-size:12px;color:var(--sub);margin:4px 2px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 12px;font-size:13px;text-decoration:none}
+.chip.syn{background:var(--acc2);border-color:transparent;color:var(--acc);font-size:12px;padding:2px 10px}
+h2.sec{font-size:14px;color:var(--sub);margin:16px 2px 8px;font-weight:700}
+.art .ln{margin:2px 0;overflow-wrap:anywhere}
+.art .ln.p{margin-top:10px}
+.art .tb{font-size:13px;background:var(--bg);padding:2px 6px;border-radius:4px}
+.art .path{font-size:12px;color:var(--sub)}
+.art h1{font-size:19px;margin:4px 0 0}
+.bar{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:14px;text-decoration:none;cursor:pointer}
+.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+.md h1{font-size:20px;margin:4px 0 8px}.md h2{font-size:17px;margin:20px 0 6px;border-left:4px solid var(--acc);padding-left:8px}.md h3{font-size:15px}
+.md table{border-collapse:collapse;width:100%;font-size:13px;display:block;overflow-x:auto}
+.md th,.md td{border:1px solid var(--line);padding:5px 6px;vertical-align:top;min-width:70px}
+.md th{background:var(--acc2)}
+.md ul{padding-left:20px;margin:6px 0}
+.md a{color:var(--acc)}
+a.ref{color:var(--acc);text-decoration:underline dotted}
+.toc-ch{font-weight:700;font-size:14px;margin:14px 2px 6px;color:var(--sub)}
+.toc a{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;font-size:14px}
+.toc a span:first-child{flex:none;min-width:6.5em;font-weight:700}
+.toc a.del{opacity:.45}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.seg a{flex:1;text-align:center;padding:7px 0;font-size:14px;color:var(--ink);text-decoration:none}
+.seg a.on{background:var(--acc);color:#fff;font-weight:700}
+.empty{color:var(--sub);text-align:center;padding:30px 10px}
+.note{font-size:12px;color:var(--sub);line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">液石法ハンドブック <small id="built"></small></div>
+  <form class="sbox" id="sf">
+    <input id="q" type="search" placeholder="例：無償貸与、三部料金、16条の2" autocomplete="off" enterkeyhint="search">
+    <button>検索</button>
+  </form>
+  <div class="filters">
+    <label><input type="checkbox" data-law="法" checked>法</label>
+    <label><input type="checkbox" data-law="令" checked>施行令</label>
+    <label><input type="checkbox" data-law="規則" checked>施行規則</label>
+    <label><input type="checkbox" data-law="wiki" checked>まとめ</label>
+    <label><input type="checkbox" id="syn" checked>関連語も探す</label>
+  </div>
+</header>
+<main id="main"></main>
+<nav>
+  <a href="#" data-tab="home"><b>⌕</b>検索</a>
+  <a href="#toc/法" data-tab="toc"><b>☰</b>目次</a>
+  <a href="#w/lpgas-law-basics" data-tab="wiki"><b>📘</b>まとめ</a>
+  <a href="#fav" data-tab="fav"><b>★</b>保存</a>
+</nav>
+<script>
+const DATA = /*__DATA__*/null;
+
+// ---------- 業務用語 → 条文用語 の関連語辞書 ----------
+const SYN = {
+  "無償貸与":["貸与","利益を供与","正常な商慣習"],
+  "貸与":["貸与","消費設備の貸与等"],
+  "利益供与":["利益を供与","正常な商慣習"],
+  "過大な営業":["利益を供与","正常な商慣習","変更することを制限"],
+  "協力金":["利益を供与","正常な商慣習"],
+  "キャッシュバック":["利益を供与","正常な商慣習"],
+  "三部料金":["量にかかわらず生ずる費用","量に応じて生ずる費用","消費設備の貸与等に係る費用","算定根拠"],
+  "設備料金":["消費設備の貸与等に係る費用","設置等に係る費用"],
+  "外出し":["消費設備の貸与等に係る費用","算定根拠"],
+  "基本料金":["量にかかわらず生ずる費用"],
+  "従量料金":["量に応じて生ずる費用"],
+  "料金表":["料金表","料金その他"],
+  "料金":["料金","費用","算定根拠","料金表"],
+  "エアコン":["設置等に係る費用以外の費用"],
+  "オーナー":["所有者","賃貸借"],
+  "大家":["所有者","賃貸借"],
+  "賃貸":["賃貸借","所有者"],
+  "アパート":["賃貸借","所有者","集合住宅"],
+  "切替":["変更することを制限","解除","撤去"],
+  "切り替え":["変更することを制限","解除","撤去"],
+  "乗り換え":["変更することを制限","解除","撤去"],
+  "解約":["解除","撤去","所有権を移転"],
+  "契約書":["書面","書面の交付"],
+  "重要事項":["書面の交付","書面"],
+  "書面":["書面"],
+  "電子交付":["情報通信の技術","電磁的方法"],
+  "点検":["点検","調査"],
+  "定期点検":["点検","調査"],
+  "保安点検":["点検","調査","保安業務"],
+  "調査":["調査","点検"],
+  "保安":["保安業務","保安機関","保安教育"],
+  "委託":["委託","保安機関"],
+  "主任者":["業務主任者"],
+  "設備士":["液化石油ガス設備士"],
+  "工事":["液化石油ガス設備工事","工事"],
+  "ボンベ":["容器","充てん容器"],
+  "容器":["容器","充てん容器"],
+  "バルク":["バルク貯槽","バルク容器","バルク供給"],
+  "メーター":["ガスメーター","計量"],
+  "警報器":["ガス漏れ警報器","警報器"],
+  "ガス漏れ":["ガス漏れ","漏えい"],
+  "co":["一酸化炭素"],
+  "一酸化炭素":["一酸化炭素"],
+  "事故":["事故","災害"],
+  "緊急":["緊急時","災害","措置を講ずる"],
+  "罰則":["罰金","拘禁刑","懲役","科料","過料"],
+  "罰金":["罰金"],
+  "登録":["登録"],
+  "開業":["登録","届出"],
+  "廃業":["廃止の届出","廃止"],
+  "帳簿":["帳簿","記録"],
+  "記録":["帳簿","記録","保存"],
+  "周知":["周知"],
+  "撤去":["撤去"],
+  "配管":["配管"],
+  "質量":["質量","法定計量単位"],
+  "立入":["立入検査","報告の徴収"],
+  "命令":["基準適合命令","命ずることができる","改善命令"],
+  "教育":["保安教育"],
+  "表示":["表示","標識"],
+  "標識":["標識"],
+  "器具":["液化石油ガス器具等","器具"],
+  "psマーク":["特定液化石油ガス器具等","表示"],
+  "賠償":["損害の賠償","賠償"],
+  "保険":["損害の賠償","賠償"]
+};
+
+const LAWNAME = {"法":"法","令":"施行令","規則":"施行規則"};
+const KN = "〇一二三四五六七八九";
+function kanji(n){ // 1..9999 → 漢数字（条文表記）
+  n=+n; if(!n) return "";
+  let s="", u=[[1000,"千"],[100,"百"],[10,"十"]];
+  for(const [v,c] of u){ const d=Math.floor(n/v); if(d){ s+=(d>1?KN[d]:"")+c; n%=v; } }
+  return s+(n?KN[n]:"");
+}
+const norm = s => s.normalize("NFKC").toLowerCase().replace(/\s+/g,"");
+// クエリ中の算用数字を条文の漢数字に（16条→十六条、第3項→第三項）
+const toKanjiNums = s => s.replace(/\d+/g, m => kanji(m));
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ---------- インデックス ----------
+const ARTS=[], BYID={};
+for(const law of DATA.laws){
+  law.arts.forEach((a,i)=>{
+    a.lawId=law.id; a.idx=i; a.lawObj=law;
+    a.body=a.lines.map(l=>l.t).join("\n");
+    a.n=norm(a.title+" "+a.cap+" "+a.path+" "+a.body);
+    a.nh=norm(a.title+" "+a.cap+" "+a.path);
+    ARTS.push(a); BYID[a.id]=a;
+  });
+}
+const WIKI = DATA.wiki.map(w=>({...w, n:norm(w.title+" "+w.md), plain:w.md.replace(/[#*|`>-]+/g," ").replace(/\[\[([^\]]+)\]\]/g,"$1").replace(/\s+/g," ")}));
+const WBYTITLE = Object.fromEntries(WIKI.map(w=>[w.title,w]));
+document.getElementById("built").textContent = "条文 "+DATA.built+" 時点";
+
+function artLabel(a){
+  return (a.law==="法"?"":LAWNAME[a.law]+" ")+a.title;
+}
+function numToId(law, n1, n2, n3){
+  return law+"-"+n1+(n2?"_"+n2:"")+(n3?"_"+n3:"");
+}
+
+// 条番号の直接指定：「16条の2」「規則16条」「法第27条」
+function parseArticleRef(q){
+  const m = q.normalize("NFKC").replace(/\s+/g,"").match(/^(法|施行令|令|施行規則|規則)?第?(\d+)条(?:の(\d+))?(?:の(\d+))?/);
+  if(!m) return null;
+  const law = m[1] ? ({"法":"法","施行令":"令","令":"令","施行規則":"規則","規則":"規則"})[m[1]] : null;
+  const laws = law ? [law] : ["法","規則","令"];
+  return laws.map(l=>BYID[numToId(l,m[2],m[3],m[4])]).filter(Boolean);
+}
+
+function expandTerms(q, useSyn){
+  const terms = q.normalize("NFKC").split(/[\s、,，]+/).filter(Boolean);
+  return terms.map(t=>{
+    const base = norm(t), kj = norm(toKanjiNums(t));
+    const own = [...new Set([base,kj])];
+    const syn = new Set();
+    if(useSyn){
+      let keys = Object.keys(SYN).filter(k=>{ const nk=norm(k); return base.includes(nk) || (base.length>=2 && nk.includes(base)); });
+      // 「三部料金」に含まれる「料金」のように、より長い一致語に含まれる短い語は使わない
+      keys = keys.filter(k=>!keys.some(o=>o!==k && norm(o).includes(norm(k)) && base.includes(norm(o))));
+      keys.forEach(k=>SYN[k].forEach(s=>syn.add(norm(s))));
+      own.forEach(o=>syn.delete(o));
+    }
+    return {raw:t, own, syn:[...syn]};
+  });
+}
+function countAll(hay, needle){
+  if(!needle) return 0; let c=0, i=0;
+  while((i=hay.indexOf(needle,i))!==-1){ c++; i+=needle.length; }
+  return c;
+}
+function scoreText(n, nh, groups, mode){
+  let total=0, matched=0;
+  for(const g of groups){
+    let gs=0;
+    for(const o of g.own){ const c=countAll(n,o); gs+=c*3; if(nh && nh.includes(o)) gs+=12; }
+    for(const s of g.syn){ const c=countAll(n,s); gs+=c; if(nh && nh.includes(s)) gs+=5; }
+    if(gs>0) matched++;
+    total+=gs;
+  }
+  if(mode==="and" && matched<groups.length) return 0;
+  return total + matched*20;
+}
+
+function enabledLaws(){
+  const s=new Set();
+  document.querySelectorAll(".filters input[data-law]").forEach(c=>{ if(c.checked) s.add(c.dataset.law); });
+  return s;
+}
+
+// ある条を引用している条文（例：法第十六条 ← 規則第十六条「法第十六条第二項の…」）
+function citers(t){
+  const out=[];
+  const re = new RegExp(t.title.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?!の[一二三四五六七八九十])","g");
+  for(const a of ARTS){
+    if(a===t || a.del) continue;
+    let m, hit=false;
+    while((m=re.exec(a.body))){
+      const pre = a.body.slice(Math.max(0,m.index-3), m.index);
+      const last = pre.slice(-1), before = pre.slice(-2,-1);
+      const ideo = c => /[一-鿿]/.test(c);
+      let ok;
+      if(t.law===a.law) ok = !(last==="法"||last==="令"||pre.endsWith("規則")) || (t.law==="法"&&last==="法"&&!ideo(before));
+      else if(t.law==="法") ok = last==="法" && !ideo(before);
+      else if(t.law==="令") ok = last==="令" && !ideo(before);
+      else ok = pre.endsWith("規則");
+      if(ok){ hit=true; break; }
+    }
+    if(hit) out.push(a);
+  }
+  return out;
+}
+
+function search(q){
+  const useSyn = document.getElementById("syn").checked;
+  const laws = enabledLaws();
+  const groups = expandTerms(q, useSyn);
+  if(!groups.length) return null;
+  const direct = (parseArticleRef(q)||[]).filter(a=>laws.has(a.law));
+  // 条番号だけの検索 → その条と、その条を引用している条文
+  if(direct.length && /^(法|施行令|令|施行規則|規則)?第?\d+条(の\d+){0,2}$/.test(q.normalize("NFKC").replace(/\s+/g,""))){
+    const seen=new Set(direct.map(a=>a.id));
+    const cites=[];
+    direct.forEach(t=>citers(t).forEach(a=>{ if(!seen.has(a.id)&&laws.has(a.law)){ seen.add(a.id); cites.push({a, s:1, of:t}); } }));
+    const g=[{raw:q, own:direct.map(t=>norm(t.title)), syn:[]}];
+    return {groups:g, direct, mode:"ref", arts:cites, wiki:[]};
+  }
+  let mode="and";
+  const run = () => {
+    const arts = ARTS.filter(a=>laws.has(a.law)&&!a.del).map(a=>({a, s:scoreText(a.n,a.nh,groups,mode)})).filter(x=>x.s>0)
+      .sort((x,y)=>y.s-x.s || (x.a.law===y.a.law?x.a.idx-y.a.idx:"法令規則".indexOf(x.a.law)-"法令規則".indexOf(y.a.law)));
+    const wiki = laws.has("wiki") ? WIKI.map(w=>({w, s:scoreText(w.n,norm(w.title),groups,mode)})).filter(x=>x.s>0).sort((x,y)=>y.s-x.s) : [];
+    return {arts, wiki};
+  };
+  let r = run();
+  if(!r.arts.length && !r.wiki.length && groups.length>1){ mode="or"; r=run(); }
+  return {groups, direct, mode, ...r};
+}
+
+// ---------- ハイライト ----------
+function hlNeedles(groups){
+  const set=new Set();
+  groups.forEach(g=>{ g.own.forEach(x=>set.add(x)); g.syn.forEach(x=>set.add(x)); });
+  return [...set].filter(x=>x.length>0).sort((a,b)=>b.length-a.length);
+}
+function highlight(text, needles){
+  if(!needles.length) return esc(text);
+  // NFKC 比較のため、表示用テキストも正規化（法令本文はほぼ全角のまま変わらない）
+  const t = text.normalize("NFKC");
+  const lower = t.toLowerCase();
+  const marks = new Array(t.length).fill(false);
+  for(const n of needles){ let i=0; while((i=lower.indexOf(n,i))!==-1){ for(let k=i;k<i+n.length;k++) marks[k]=true; i+=n.length; } }
+  let out="", on=false;
+  for(let i=0;i<t.length;i++){
+    if(marks[i]&&!on){ out+="<mark>"; on=true; }
+    if(!marks[i]&&on){ out+="</mark>"; on=false; }
+    out+=esc(t[i]);
+  }
+  return out+(on?"</mark>":"");
+}
+function snippet(text, needles, len=90){
+  const t=text.normalize("NFKC").replace(/\n/g," "), lower=t.toLowerCase();
+  let pos=-1;
+  for(const n of needles){ const i=lower.indexOf(n); if(i!==-1 && (pos===-1||i<pos)) pos=i; }
+  if(pos===-1) return esc(t.slice(0,len))+(t.length>len?"…":"");
+  const st=Math.max(0,pos-30), s=t.slice(st, st+len);
+  return (st>0?"…":"")+highlight(s,needles)+(st+len<t.length?"…":"");
+}
+
+// ---------- 条文中の参照をリンク化 ----------
+function linkRefs(html, defaultLaw){
+  // 「法第十六条」「規則第16条第15号の3」「第二十七条第一項」など（同一法令内）
+  return html.replace(/(施行規則|規則|施行令|法)?第([0-9一二三四五六七八九十百千]+)条(?:の([0-9一二三四五六七八九十]+))?(?:の([0-9一二三四五六七八九十]+))?/g, (m, lw, a, b, c, off, str)=>{
+    // 他の法律名の直後（例：高圧ガス保安法第…、計量法（…）第…）はリンクしない
+    const before = str.slice(Math.max(0,off-6), off);
+    if(!lw && /(保安法|計量法|自治法|建築基準法|消防法|法律)$/.test(before)) return m;
+    if(!lw && /）$/.test(before)) return m;
+    const law = lw ? ({"施行規則":"規則","規則":"規則","施行令":"令","法":"法"})[lw] : defaultLaw;
+    const id = numToId(law, k2n(a), b&&k2n(b), c&&k2n(c));
+    return BYID[id] ? `<a class="ref" href="#a/${encodeURIComponent(id)}">${m}</a>` : m;
+  });
+}
+function k2n(s){
+  if(/^\d+$/.test(s)) return +s;
+  let n=0, cur=0;
+  for(const ch of s){
+    const d=KN.indexOf(ch);
+    if(d>0) cur=d;
+    else if(ch==="十"){ n+=(cur||1)*10; cur=0; }
+    else if(ch==="百"){ n+=(cur||1)*100; cur=0; }
+    else if(ch==="千"){ n+=(cur||1)*1000; cur=0; }
+  }
+  return n+cur;
+}
+
+// ---------- 保存（★）と履歴 ----------
+const LS = {
+  get(k,d){ try{ return JSON.parse(localStorage.getItem(k))??d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+const favs = () => LS.get("lp-favs",[]);
+function toggleFav(id){ const f=favs(); const i=f.indexOf(id); i===-1?f.unshift(id):f.splice(i,1); LS.set("lp-favs",f); }
+function pushHist(q){ const h=LS.get("lp-hist",[]).filter(x=>x!==q); h.unshift(q); LS.set("lp-hist",h.slice(0,10)); }
+
+// ---------- 画面 ----------
+const $main = document.getElementById("main");
+const $q = document.getElementById("q");
+let lastGroups = [];
+
+function setTab(t){ document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.tab===t)); }
+
+function viewHome(){
+  setTab("home");
+  const hist = LS.get("lp-hist",[]);
+  const sample = ["無償貸与","三部料金","賃貸 料金表","切替","書面の交付","保安業務","業務主任者","設備士","撤去","帳簿","罰則","16条の2","規則16条"];
+  $main.innerHTML = `
+    <div class="card">
+      <div class="ttl">調べたい言葉を入れてください</div>
+      <div class="note">業務で使う言葉（無償貸与、オーナー、切替など）を入れると、条文で使われている言葉（利益を供与、所有者、変更を制限…）でも探します。「16条の2」「規則16条」のように条番号を入れるとその条に飛べます。スペースで区切ると全部を含む条文を探します。</div>
+    </div>
+    ${hist.length?`<h2 class="sec">最近の検索</h2><div class="chips">${hist.map(h=>`<a class="chip" href="#q/${encodeURIComponent(h)}">${esc(h)}</a>`).join("")}</div>`:""}
+    <h2 class="sec">よく調べる言葉</h2>
+    <div class="chips">${sample.map(h=>`<a class="chip" href="#q/${encodeURIComponent(h)}">${esc(h)}</a>`).join("")}</div>
+    <h2 class="sec">まとめ</h2>
+    ${WIKI.map(w=>`<a class="card" href="#w/${w.id}"><span class="tag t-wiki">まとめ</span><span class="ttl">${esc(w.title)}</span></a>`).join("")}
+    <p class="note">条文は e-Gov 法令検索のデータ（${DATA.built} 時点）から作成しています。本則のみで、附則・様式は含みません。最新の条文や解釈は e-Gov と経済産業省の資料で確認してください。</p>`;
+}
+
+function viewSearch(q){
+  setTab("home");
+  $q.value=q;
+  const r = search(q);
+  if(!r){ viewHome(); return; }
+  pushHist(q);
+  lastGroups = r.groups;
+  const needles = hlNeedles(r.groups);
+  const syns = [...new Set(r.groups.flatMap(g=>g.syn))];
+  const limit = 60;
+  let h = "";
+  if(syns.length) h += `<div class="meta">関連語でも検索しました：</div><div class="chips">${syns.map(s=>`<span class="chip syn">${esc(s)}</span>`).join("")}</div>`;
+  if(r.mode==="or") h += `<div class="meta">全部の言葉を含む条文がなかったので、どれかを含む条文を表示しています。</div>`;
+  if(r.direct.length){
+    h += `<h2 class="sec">条番号で一致</h2>` + r.direct.map(a=>artCard(a,needles)).join("");
+  }
+  if(r.wiki.length){
+    h += `<h2 class="sec">まとめ・Q&A（${r.wiki.length}）</h2>` + r.wiki.map(x=>`<a class="card" href="#w/${x.w.id}"><span class="tag t-wiki">まとめ</span><span class="ttl">${esc(x.w.title)}</span><div class="snip">${snippet(x.w.plain,needles,110)}</div></a>`).join("");
+  }
+  h += r.mode==="ref"
+    ? `<h2 class="sec">この条を引用している条文（${r.arts.length}件）</h2>`
+    : `<h2 class="sec">条文（${r.arts.length}件${r.arts.length>limit?"・上位"+limit+"件を表示":""}）</h2>`;
+  h += r.arts.length ? r.arts.slice(0,limit).map(x=>artCard(x.a,needles)).join("") : `<div class="empty">見つかりませんでした。言葉を短くするか、「関連語も探す」をオンにしてください。</div>`;
+  $main.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+function artCard(a, needles){
+  return `<a class="card" href="#a/${encodeURIComponent(a.id)}">
+    <span class="tag t-${a.law}">${LAWNAME[a.law]}</span><span class="ttl">${esc(a.title)}</span>
+    <span class="cap">${esc(a.cap||a.path.split(" / ").pop()||"")}</span>
+    <div class="snip">${snippet(a.body,needles)}</div></a>`;
+}
+
+function viewArticle(id){
+  const a = BYID[id];
+  if(!a){ $main.innerHTML=`<div class="empty">条文が見つかりません</div>`; return; }
+  setTab(location.hash.includes("from=toc")?"toc":"home");
+  const needles = hlNeedles(lastGroups);
+  const arts = a.lawObj.arts;
+  const prev = arts[a.idx-1], next = arts[a.idx+1];
+  const isFav = favs().includes(id);
+  const egov = `https://laws.e-gov.go.jp/law/${a.lawId}`;
+  const lines = a.lines.map(l=>{
+    const pad = l.d*1.1;
+    return `<div class="ln${l.p?" p":""}${l.tb?" tb":""}" style="padding-left:${pad}em;text-indent:${l.d?-1:0}em">${linkRefs(highlight(l.t,needles), a.law)}</div>`;
+  }).join("");
+  $main.innerHTML = `
+    <div class="card art">
+      <div class="path">${esc(a.lawObj.name)}${a.path?" ／ "+esc(a.path):""}</div>
+      <h1><span class="tag t-${a.law}">${LAWNAME[a.law]}</span>${esc(a.title)} ${a.cap?`<span class="cap">${esc(a.cap)}</span>`:""}</h1>
+      ${lines}
+      <div class="bar">
+        <button class="btn${isFav?" pri":""}" id="fav">${isFav?"★ 保存済み":"☆ 保存"}</button>
+        <button class="btn" id="share">共有</button>
+        <a class="btn" href="${egov}" target="_blank" rel="noopener">e-Govで見る</a>
+      </div>
+      <div class="bar">
+        ${prev?`<a class="btn" href="#a/${encodeURIComponent(prev.id)}">‹ ${esc(prev.title)}</a>`:""}
+        ${next?`<a class="btn" href="#a/${encodeURIComponent(next.id)}">${esc(next.title)} ›</a>`:""}
+      </div>
+    </div>
+    ${a.capInh?`<p class="note">見出し「${esc(a.cap)}」は直前の条の見出しを引き継いで表示しています。</p>`:""}`;
+  document.getElementById("fav").onclick=()=>{ toggleFav(id); viewArticle(id); };
+  document.getElementById("share").onclick=async()=>{
+    const text = `${a.lawObj.name}\n${a.title}${a.cap?" "+a.cap:""}\n\n${a.body}`;
+    if(navigator.share){ try{ await navigator.share({title:artLabel(a), text}); }catch(e){} }
+    else { try{ await navigator.clipboard.writeText(text); alert("条文をコピーしました"); }catch(e){} }
+  };
+  window.scrollTo(0,0);
+}
+
+function viewToc(law){
+  setTab("toc");
+  const L = DATA.laws.find(l=>l.key===law) || DATA.laws[0];
+  let h = `<div class="seg">${DATA.laws.map(l=>`<a href="#toc/${l.key}" class="${l.key===L.key?"on":""}">${LAWNAME[l.key]}</a>`).join("")}</div>`;
+  let curPath = null;
+  h += `<div class="card toc" style="padding:4px 0">`;
+  for(const a of L.arts){
+    if(a.path!==curPath){ curPath=a.path; if(a.path) h+=`<div class="toc-ch" style="padding:0 10px">${esc(a.path)}</div>`; }
+    h += `<a href="#a/${encodeURIComponent(a.id)}&from=toc" class="${a.del?"del":""}"><span>${esc(a.title)}</span><span>${a.del?"削除":esc(a.cap)}</span></a>`;
+  }
+  h += `</div>`;
+  $main.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+function viewFav(){
+  setTab("fav");
+  const f = favs().map(id=>BYID[id]).filter(Boolean);
+  $main.innerHTML = `<h2 class="sec">保存した条文（${f.length}）</h2>` +
+    (f.length ? f.map(a=>artCard(a,[])).join("") : `<div class="empty">条文の画面で「☆ 保存」を押すとここに並びます。<br>保存はこのスマホの中だけに残ります。</div>`);
+}
+
+// ---------- まとめ（Markdown） ----------
+function inlineMd(s){
+  s = esc(s);
+  s = s.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
+  s = s.replace(/`([^`]+)`/g,"<code>$1</code>");
+  s = s.replace(/\[\[([^\]]+)\]\]/g,(m,t)=>WBYTITLE[t]?`<a href="#w/${WBYTITLE[t].id}">${t}</a>`:t);
+  s = s.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  s = s.replace(/(^|[\s（(])(https?:\/\/[^\s<）)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  return linkRefs(s, "法");
+}
+function renderMd(md){
+  const L = md.split("\n"); let out="", i=0;
+  while(i<L.length){
+    const l=L[i];
+    if(/^#{1,3} /.test(l)){ const n=l.match(/^#+/)[0].length; out+=`<h${n}>${inlineMd(l.slice(n+1))}</h${n}>`; i++; continue; }
+    if(/^\|/.test(l)){
+      const rows=[]; while(i<L.length && /^\|/.test(L[i])){ rows.push(L[i]); i++; }
+      const cells = r => r.replace(/^\||\|$/g,"").split("|").map(c=>c.trim());
+      out+="<table><tr>"+cells(rows[0]).map(c=>`<th>${inlineMd(c)}</th>`).join("")+"</tr>";
+      rows.slice(2).forEach(r=>{ out+="<tr>"+cells(r).map(c=>`<td>${inlineMd(c)}</td>`).join("")+"</tr>"; });
+      out+="</table>"; continue;
+    }
+    if(/^\s*[-*] /.test(l)){
+      let html="", depth=-1;
+      while(i<L.length && /^\s*[-*] /.test(L[i])){
+        const d=Math.floor(L[i].match(/^\s*/)[0].length/2);
+        while(depth<d){ html+="<ul>"; depth++; }
+        while(depth>d){ html+="</ul>"; depth--; }
+        html+=`<li>${inlineMd(L[i].replace(/^\s*[-*] /,""))}</li>`; i++;
+      }
+      while(depth>=0){ html+="</ul>"; depth--; }
+      out+=html; continue;
+    }
+    if(l.trim()===""){ i++; continue; }
+    const para=[]; while(i<L.length && L[i].trim() && !/^(#{1,3} |\||\s*[-*] )/.test(L[i])){ para.push(L[i]); i++; }
+    out+=`<p>${inlineMd(para.join(""))}</p>`;
+  }
+  return out;
+}
+function viewWiki(id){
+  setTab("wiki");
+  const w = WIKI.find(x=>x.id===id) || WIKI[0];
+  if(!w){ $main.innerHTML=`<div class="empty">まとめはまだありません</div>`; return; }
+  $main.innerHTML = `<div class="seg">${WIKI.map(x=>`<a href="#w/${x.id}" class="${x.id===w.id?"on":""}" style="font-size:12px">${esc(x.title.replace(/（.*?）/,""))}</a>`).join("")}</div>
+    <div class="card md">${renderMd(w.md)}</div>`;
+  window.scrollTo(0,0);
+}
+
+// ---------- ルーティング ----------
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  if(h.startsWith("q/")) return viewSearch(h.slice(2));
+  if(h.startsWith("a/")) return viewArticle(h.slice(2).split("&")[0]);
+  if(h.startsWith("toc")) return viewToc(h.split("/")[1]||"法");
+  if(h.startsWith("w/")) return viewWiki(h.slice(2));
+  if(h==="fav") return viewFav();
+  $q.value=""; lastGroups=[]; viewHome();
+}
+document.getElementById("sf").onsubmit = e => {
+  e.preventDefault(); const q=$q.value.trim(); if(!q) return;
+  $q.blur();
+  const target = "#q/"+encodeURIComponent(q);
+  if(location.hash===target) route(); else location.hash=target;
+};
+document.querySelectorAll(".filters input").forEach(c=>c.onchange=()=>{
+  LS.set("lp-filters",[...document.querySelectorAll(".filters input")].map(x=>x.checked));
+  if(location.hash.startsWith("#q/")) route();
+});
+LS.get("lp-filters",[]).forEach((v,i)=>{ const el=document.querySelectorAll(".filters input")[i]; if(el) el.checked=v; });
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
