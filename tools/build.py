@@ -186,6 +186,39 @@ def load_wiki():
     return pages
 
 
+CASES_PAGE = "lpgas-case-studies"
+
+
+def load_cases():
+    """wiki のケーススタディページを構造化する（## C番号 ごと）。"""
+    p = WIKI / "pages" / f"{CASES_PAGE}.md"
+    if not p.exists():
+        return []
+    _, body = strip_frontmatter(p.read_text(encoding="utf-8"))
+    body = body.split("## Related Pages")[0]
+    cases = []
+    for block in re.split(r"^## (?=C\d+ )", body, flags=re.M)[1:]:
+        head, _, rest = block.partition("\n")
+        cid, _, title = head.strip().partition(" ")
+        meta = dict(re.findall(r"^- ([^:：]+)[:：]\s*(.+)$", rest.split("### ")[0], flags=re.M))
+        secs = {}
+        for s in re.split(r"^### ", rest, flags=re.M)[1:]:
+            name, _, txt = s.partition("\n")
+            secs[name.strip()] = txt.strip()
+        refs = []
+        for law, a, sub in re.findall(r"(法|令|規則)\s*(\d+)条(?:の(\d+))?", meta.get("根拠", "")):
+            rid = f"{law}-{a}" + (f"_{sub}" if sub else "")
+            if rid not in refs:
+                refs.append(rid)
+        cases.append({
+            "id": cid, "title": title.strip(), "theme": meta.get("テーマ", ""),
+            "verdict": meta.get("判定", "").strip(), "basis": meta.get("根拠", ""),
+            "kind": meta.get("出典区分", ""), "src": meta.get("出典", ""), "refs": refs,
+            "scene": secs.get("場面", ""), "expl": secs.get("解説", ""), "tips": secs.get("実務ポイント", ""),
+        })
+    return cases
+
+
 def main():
     if "--fetch" in sys.argv or not RAW.exists():
         fetch()
@@ -198,11 +231,13 @@ def main():
         "built": date.today().isoformat(),
         "laws": laws,
         "wiki": load_wiki(),
+        "cases": load_cases(),
     }
     js = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     js = js.replace("</", "<\\/")
     html = TEMPLATE.read_text(encoding="utf-8").replace("/*__DATA__*/null", js)
     OUT.write_text(html, encoding="utf-8")
+    print("cases", len(data["cases"]))
     print("wrote", OUT, f"{OUT.stat().st_size/1024:.0f} KB")
 
 

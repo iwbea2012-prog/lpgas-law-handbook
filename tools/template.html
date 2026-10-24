@@ -67,6 +67,18 @@ a.ref{color:var(--acc);text-decoration:underline dotted}
 .seg a.on{background:var(--acc);color:#fff;font-weight:700}
 .empty{color:var(--sub);text-align:center;padding:30px 10px}
 .note{font-size:12px;color:var(--sub);line-height:1.6}
+.vd{display:inline-flex;align-items:center;justify-content:center;width:1.7em;height:1.7em;border-radius:50%;font-weight:700;color:#fff;margin-right:8px;flex:none}
+.vd-o{background:#1d7a52}.vd-t{background:#c48a12}.vd-x{background:#c0392b}
+.crow{display:flex;align-items:flex-start}
+.ctheme{font-size:11px;color:var(--sub)}
+.scene{background:var(--acc2);border-radius:10px;padding:10px 12px;margin:8px 0}
+.qbtns{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
+.qbtns button{display:flex;align-items:center;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:12px;font-size:15px}
+.qbtns button.right{border:2px solid #1d7a52}.qbtns button.wrong{border:2px solid #c0392b;opacity:.8}
+.res{font-weight:700;font-size:17px;margin:4px 0}
+.res.ok{color:#1d7a52}.res.ng{color:#c0392b}
+.go{border-left:3px solid var(--kis);padding:4px 10px;margin:8px 0;font-size:14px;background:var(--bg);border-radius:0 6px 6px 0}
+.score{font-size:13px;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -80,7 +92,7 @@ a.ref{color:var(--acc);text-decoration:underline dotted}
     <label><input type="checkbox" data-law="法" checked>法</label>
     <label><input type="checkbox" data-law="令" checked>施行令</label>
     <label><input type="checkbox" data-law="規則" checked>施行規則</label>
-    <label><input type="checkbox" data-law="wiki" checked>まとめ</label>
+    <label><input type="checkbox" data-law="wiki" checked>まとめ・ケース</label>
     <label><input type="checkbox" id="syn" checked>関連語も探す</label>
   </div>
 </header>
@@ -88,6 +100,7 @@ a.ref{color:var(--acc);text-decoration:underline dotted}
 <nav>
   <a href="#" data-tab="home"><b>⌕</b>検索</a>
   <a href="#toc/法" data-tab="toc"><b>☰</b>目次</a>
+  <a href="#cases" data-tab="cases"><b>✎</b>ケース</a>
   <a href="#w/lpgas-law-basics" data-tab="wiki"><b>📘</b>まとめ</a>
   <a href="#fav" data-tab="fav"><b>★</b>保存</a>
 </nav>
@@ -150,6 +163,10 @@ const SYN = {
   "記録":["帳簿","記録","保存"],
   "周知":["周知"],
   "撤去":["撤去"],
+  "違約金":["違約金","解除","変更することを制限"],
+  "自動更新":["更新","解除"],
+  "フリーメンテ":["利益を供与","正常な商慣習"],
+  "キックバック":["利益を供与","正常な商慣習"],
   "配管":["配管"],
   "質量":["質量","法定計量単位"],
   "立入":["立入検査","報告の徴収"],
@@ -188,6 +205,10 @@ for(const law of DATA.laws){
   });
 }
 const WIKI = DATA.wiki.map(w=>({...w, n:norm(w.title+" "+w.md), plain:w.md.replace(/[#*|`>-]+/g," ").replace(/\[\[([^\]]+)\]\]/g,"$1").replace(/\s+/g," ")}));
+const CASES = (DATA.cases||[]).map(c=>({...c, n:norm(c.id+" "+c.title+" "+c.theme+" "+c.basis+" "+c.scene+" "+c.expl+" "+c.tips), plain:(c.scene+" "+c.expl).replace(/[#*|`>-]+/g," ").replace(/\s+/g," ")}));
+const CBYID = Object.fromEntries(CASES.map(c=>[c.id,c]));
+const VD = {"○":["o","問題なし"],"△":["t","条件次第"],"×":["x","問題あり"]};
+const vdBadge = v => `<span class="vd vd-${(VD[v]||["t"])[0]}">${esc(v||"?")}</span>`;
 const WBYTITLE = Object.fromEntries(WIKI.map(w=>[w.title,w]));
 document.getElementById("built").textContent = "条文 "+DATA.built+" 時点";
 
@@ -282,17 +303,18 @@ function search(q){
     const cites=[];
     direct.forEach(t=>citers(t).forEach(a=>{ if(!seen.has(a.id)&&laws.has(a.law)){ seen.add(a.id); cites.push({a, s:1, of:t}); } }));
     const g=[{raw:q, own:direct.map(t=>norm(t.title)), syn:[]}];
-    return {groups:g, direct, mode:"ref", arts:cites, wiki:[]};
+    return {groups:g, direct, mode:"ref", arts:cites, wiki:[], cases:CASES.filter(c=>direct.some(t=>c.refs.includes(t.id))).map(c=>({c}))};
   }
   let mode="and";
   const run = () => {
     const arts = ARTS.filter(a=>laws.has(a.law)&&!a.del).map(a=>({a, s:scoreText(a.n,a.nh,groups,mode)})).filter(x=>x.s>0)
       .sort((x,y)=>y.s-x.s || (x.a.law===y.a.law?x.a.idx-y.a.idx:"法令規則".indexOf(x.a.law)-"法令規則".indexOf(y.a.law)));
+    const cases = laws.has("wiki") ? CASES.map(c=>({c, s:scoreText(c.n,norm(c.title),groups,mode)})).filter(x=>x.s>0).sort((x,y)=>y.s-x.s) : [];
     const wiki = laws.has("wiki") ? WIKI.map(w=>({w, s:scoreText(w.n,norm(w.title),groups,mode)})).filter(x=>x.s>0).sort((x,y)=>y.s-x.s) : [];
-    return {arts, wiki};
+    return {arts, wiki, cases};
   };
   let r = run();
-  if(!r.arts.length && !r.wiki.length && groups.length>1){ mode="or"; r=run(); }
+  if(!r.arts.length && !r.wiki.length && !r.cases.length && groups.length>1){ mode="or"; r=run(); }
   return {groups, direct, mode, ...r};
 }
 
@@ -380,6 +402,7 @@ function viewHome(){
     ${hist.length?`<h2 class="sec">最近の検索</h2><div class="chips">${hist.map(h=>`<a class="chip" href="#q/${encodeURIComponent(h)}">${esc(h)}</a>`).join("")}</div>`:""}
     <h2 class="sec">よく調べる言葉</h2>
     <div class="chips">${sample.map(h=>`<a class="chip" href="#q/${encodeURIComponent(h)}">${esc(h)}</a>`).join("")}</div>
+    <a class="card crow" href="#cases"><span class="vd vd-t">✎</span><div><div class="ttl">ケーススタディ（${CASES.length}件）</div><div class="note">「この営業は大丈夫？」を ○△× で練習</div></div></a>
     <h2 class="sec">まとめ</h2>
     ${WIKI.map(w=>`<a class="card" href="#w/${w.id}"><span class="tag t-wiki">まとめ</span><span class="ttl">${esc(w.title)}</span></a>`).join("")}
     <p class="note">条文は e-Gov 法令検索のデータ（${DATA.built} 時点）から作成しています。本則のみで、附則・様式は含みません。最新の条文や解釈は e-Gov と経済産業省の資料で確認してください。</p>`;
@@ -400,6 +423,9 @@ function viewSearch(q){
   if(r.mode==="or") h += `<div class="meta">全部の言葉を含む条文がなかったので、どれかを含む条文を表示しています。</div>`;
   if(r.direct.length){
     h += `<h2 class="sec">条番号で一致</h2>` + r.direct.map(a=>artCard(a,needles)).join("");
+  }
+  if(r.cases.length){
+    h += `<h2 class="sec">ケース（${r.cases.length}）</h2>` + r.cases.map(x=>caseCard(x.c, needles)).join("");
   }
   if(r.wiki.length){
     h += `<h2 class="sec">まとめ・Q&A（${r.wiki.length}）</h2>` + r.wiki.map(x=>`<a class="card" href="#w/${x.w.id}"><span class="tag t-wiki">まとめ</span><span class="ttl">${esc(x.w.title)}</span><div class="snip">${snippet(x.w.plain,needles,110)}</div></a>`).join("");
@@ -447,6 +473,7 @@ function viewArticle(id){
         ${next?`<a class="btn" href="#a/${encodeURIComponent(next.id)}">${esc(next.title)} ›</a>`:""}
       </div>
     </div>
+    ${(()=>{ const rc=CASES.filter(c=>c.refs.includes(a.id)); return rc.length?`<h2 class="sec">この条に関係するケース（${rc.length}）</h2>`+rc.map(c=>caseCard(c,[])).join(""):""; })()}
     ${a.capInh?`<p class="note">見出し「${esc(a.cap)}」は直前の条の見出しを引き継いで表示しています。</p>`:""}`;
   document.getElementById("fav").onclick=()=>{ toggleFav(id); viewArticle(id); };
   document.getElementById("share").onclick=async()=>{
@@ -477,6 +504,109 @@ function viewFav(){
   const f = favs().map(id=>BYID[id]).filter(Boolean);
   $main.innerHTML = `<h2 class="sec">保存した条文（${f.length}）</h2>` +
     (f.length ? f.map(a=>artCard(a,[])).join("") : `<div class="empty">条文の画面で「☆ 保存」を押すとここに並びます。<br>保存はこのスマホの中だけに残ります。</div>`);
+}
+
+// ---------- ケーススタディ ----------
+function caseCard(c, needles){
+  return `<a class="card crow" href="#c/${c.id}">${vdBadge(c.verdict)}<div><div class="ctheme">${esc(c.id)}・${esc(c.theme)}${c.kind==="実務相談"?"・実務相談":""}</div><div class="ttl">${esc(c.title)}</div>${needles&&needles.length?`<div class="snip">${snippet(c.plain,needles,100)}</div>`:""}</div></a>`;
+}
+const themes = () => [...new Set(CASES.map(c=>c.theme))];
+const quizLog = () => LS.get("lp-quiz",{});
+function themeSeg(base, cur){
+  return `<div class="chips">${["", ...themes()].map(t=>`<a class="chip${t===cur?" syn":""}" href="#${base}/${encodeURIComponent(t)}">${t?esc(t):"すべて"}</a>`).join("")}</div>`;
+}
+function viewCases(theme){
+  setTab("cases");
+  const list = CASES.filter(c=>!theme||c.theme===theme);
+  const log = quizLog();
+  const done = list.filter(c=>c.id in log).length, ok = list.filter(c=>log[c.id]===true).length;
+  const wrong = list.filter(c=>log[c.id]===false).length;
+  $main.innerHTML = `
+    <div class="card">
+      <div class="ttl">問題モード</div>
+      <div class="note">場面を読んで ○（問題なし）／△（条件次第）／×（問題あり）を選ぶと、解説と根拠条文が出ます。</div>
+      <div class="score">これまで：${done}/${list.length}問に回答、正解 ${ok}問</div>
+      <div class="bar">
+        <a class="btn pri" href="#quiz/${encodeURIComponent(theme)}/0">最初から解く</a>
+        ${wrong?`<a class="btn" href="#quiz/${encodeURIComponent(theme)}/wrong">まちがえた${wrong}問だけ</a>`:""}
+      </div>
+    </div>
+    ${themeSeg("cases", theme)}
+    <h2 class="sec">事例集（${list.length}件）</h2>
+    ${list.map(c=>caseCard(c,[])).join("")}
+    <p class="note">公式事例は資源エネルギー庁の取引適正化ガイドライン改正内容・「よくある質問に対する考え方」をもとに作成。個別の判断は最新のガイドライン・Q&Aや所轄に確認してください。</p>`;
+  window.scrollTo(0,0);
+}
+// 「規則16条15号の3」→ 規則第十六条の該当号の本文
+function basisDetail(c){
+  const out=[];
+  const re=/(法|令|規則)\s*(\d+)条(?:の(\d+))?(?:(\d+)号(?:の(\d+))?)?/g;
+  let m, lastLaw=null, lastArt=null;
+  const parts = c.basis.split(/[、,]/);
+  for(const p of parts){
+    re.lastIndex=0; m=re.exec(p.trim()); if(!m) continue;
+    const id=numToId(m[1],m[2],m[3]); const a=BYID[id]; if(!a) continue;
+    let line=null;
+    if(m[4]){ const head=kanji(m[4])+(m[5]?"の"+kanji(m[5]):"")+"　"; line=a.lines.find(l=>l.t.startsWith(head)); }
+    out.push(`<div class="go"><a class="ref" href="#a/${encodeURIComponent(id)}">${esc(p.trim())}</a>${line?`<div>${esc(line.t)}</div>`:""}</div>`);
+  }
+  return out.join("");
+}
+function caseBody(c){
+  return `<h2 class="sec">解説</h2><div class="md">${renderMd(c.expl)}</div>
+    ${c.tips?`<h2 class="sec">実務ポイント</h2><div class="md">${renderMd(c.tips)}</div>`:""}
+    <h2 class="sec">根拠条文</h2>${basisDetail(c)}
+    <p class="note">出典：${esc(c.src)}（${esc(c.kind)}）</p>`;
+}
+function viewCase(id){
+  setTab("cases");
+  const c=CBYID[id]; if(!c){ $main.innerHTML=`<div class="empty">ケースが見つかりません</div>`; return; }
+  const i=CASES.indexOf(c), prev=CASES[i-1], next=CASES[i+1];
+  $main.innerHTML = `<div class="card">
+    <div class="ctheme">${esc(c.id)}・${esc(c.theme)}</div>
+    <h1 style="font-size:18px;margin:2px 0 6px">${esc(c.title)}</h1>
+    <div class="crow">${vdBadge(c.verdict)}<b>${esc((VD[c.verdict]||["","?"])[1])}</b></div>
+    <div class="scene md">${renderMd(c.scene)}</div>
+    ${caseBody(c)}
+    <div class="bar">${prev?`<a class="btn" href="#c/${prev.id}">‹ ${prev.id}</a>`:""}<a class="btn" href="#cases">一覧</a>${next?`<a class="btn" href="#c/${next.id}">${next.id} ›</a>`:""}</div>
+  </div>`;
+  window.scrollTo(0,0);
+}
+function viewQuiz(theme, pos){
+  setTab("cases");
+  theme = decodeURIComponent(theme);
+  let list = CASES.filter(c=>!theme||c.theme===theme);
+  let onlyWrong = pos==="wrong" || pos.startsWith("w");
+  if(onlyWrong){ const log=quizLog(); list=list.filter(c=>log[c.id]===false); }
+  const idx = onlyWrong ? (+pos.slice(pos==="wrong"?5:1)||0) : (+pos||0);
+  const base = `#quiz/${encodeURIComponent(theme)}/`;
+  const nextHash = onlyWrong ? base+"w"+(idx+1) : base+(idx+1);
+  if(idx>=list.length){
+    const log=quizLog(); const all=CASES.filter(c=>!theme||c.theme===theme);
+    $main.innerHTML = `<div class="card"><div class="ttl">おつかれさまでした</div>
+      <div class="score">正解 ${all.filter(c=>log[c.id]===true).length} / ${all.length}問</div>
+      <div class="bar"><a class="btn pri" href="#cases/${encodeURIComponent(theme)}">ケース一覧へ</a>
+      ${all.some(c=>log[c.id]===false)?`<a class="btn" href="${base}wrong">まちがえた問題を解き直す</a>`:""}</div></div>`;
+    return;
+  }
+  const c = list[idx];
+  $main.innerHTML = `<div class="card">
+    <div class="score">${onlyWrong?"解き直し ":""}${idx+1} / ${list.length}問　<span class="ctheme">${esc(c.theme)}</span></div>
+    <div class="ttl" style="margin-top:4px">${esc(c.title)}</div>
+    <div class="scene md">${renderMd(c.scene)}</div>
+    <div class="ttl">この対応は液石法上どうでしょう？</div>
+    <div class="qbtns" id="qb">${["○","△","×"].map(v=>`<button data-v="${v}">${vdBadge(v)}${VD[v][1]}${v==="△"?"（過大でない等を根拠をもって説明できれば可）":""}</button>`).join("")}</div>
+    <div id="qa"></div></div>`;
+  document.querySelectorAll("#qb button").forEach(b=>b.onclick=()=>{
+    if(document.getElementById("qa").innerHTML) return;
+    const v=b.dataset.v, ok = v===c.verdict;
+    const log=quizLog(); log[c.id]=ok; LS.set("lp-quiz",log);
+    document.querySelectorAll("#qb button").forEach(x=>{ if(x.dataset.v===c.verdict) x.classList.add("right"); else if(x===b) x.classList.add("wrong"); });
+    document.getElementById("qa").innerHTML = `<div class="res ${ok?"ok":"ng"}">${ok?"正解！":"ざんねん"}　答えは ${esc(c.verdict)}（${VD[c.verdict][1]}）</div>
+      ${caseBody(c)}<div class="bar"><a class="btn pri" href="${onlyWrong&&ok?base+"w"+idx:nextHash}">次の問題 ›</a><a class="btn" href="#cases/${encodeURIComponent(theme)}">やめる</a></div>`;
+    document.getElementById("qa").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+  window.scrollTo(0,0);
 }
 
 // ---------- まとめ（Markdown） ----------
@@ -535,6 +665,9 @@ function route(){
   if(h.startsWith("toc")) return viewToc(h.split("/")[1]||"法");
   if(h.startsWith("w/")) return viewWiki(h.slice(2));
   if(h==="fav") return viewFav();
+  if(h.startsWith("cases")) return viewCases(h.split("/")[1]||"");
+  if(h.startsWith("c/")) return viewCase(h.slice(2));
+  if(h.startsWith("quiz")) return viewQuiz(h.split("/")[1]||"", h.split("/")[2]||"");
   $q.value=""; lastGroups=[]; viewHome();
 }
 document.getElementById("sf").onsubmit = e => {
